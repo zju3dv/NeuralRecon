@@ -7,10 +7,10 @@
 > CVPR 2021 (Oral Presentation)
 
 <!-- > [NeuralRecon: Real-Time Coherent 3D Reconstruction from Monocular Video](https://arxiv.org/pdf/2104.15838.pdf)   -->
-<!-- ![video](https://zju3dv.github.io/neuralrecon/videos/web-scene2.m4v) -->
-<video width="70%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="" id="header_vid">
+![video](https://zju3dv.github.io/neuralrecon/videos/web-scene2.m4v)
+<!-- <video width="70%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="" id="header_vid">
     <source src="https://zju3dv.github.io/neuralrecon/videos/web-scene2.m4v" type="video/mp4">
-</video>
+</video> -->
 
 <br/>
 
