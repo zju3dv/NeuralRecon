@@ -1,13 +1,16 @@
-# NeuralRecon: Real-Time Coherent 3D Reconstruction from Monocular Video (WIP)
+# NeuralRecon: Real-Time Coherent 3D Reconstruction from Monocular Video
 ### [Project Page](https://zju3dv.github.io/neuralrecon) | [Paper (TBD)](https://arxiv.org/pdf/2104.15838.pdf)
+<br/>
 
-> NeuralRecon: Real-Time Coherent 3D Reconstruction from Monocular Video
-<!-- > [NeuralRecon: Real-Time Coherent 3D Reconstruction from Monocular Video](https://arxiv.org/pdf/2104.15838.pdf)   -->
-> Jiaming Sun*, Yiming Xie*, Linghao Chen, Xiaowei Zhou, Hujun Bao
-> [Jiaming Sun](https://jiamingsun.ml)<sup>*</sup>, [Yiming Xie](https://ymingxie.github.io)<sup>*</sup>, [Xiaowei Zhou](http://www.cad.zju.edu.cn/home/xzhou/), [Hujun Bao](http://www.cad.zju.edu.cn/bao/)
+> NeuralRecon: Real-Time Coherent 3D Reconstruction from Monocular Video  
+> [Jiaming Sun](https://jiamingsun.ml)<sup>\*</sup>, [Yiming Xie](https://ymingxie.github.io)<sup>\*</sup>, [Linghao Chen](https://github.com/f-sky), [Xiaowei Zhou](http://www.cad.zju.edu.cn/home/xzhou/), [Hujun Bao](http://www.cad.zju.edu.cn/bao/)  
 > CVPR 2021 (Oral Presentation)
 
-<!-- ![monocular](https://zju3dv.github.io/neuralbody/images/monocular.gif) -->
+<!-- > [NeuralRecon: Real-Time Coherent 3D Reconstruction from Monocular Video](https://arxiv.org/pdf/2104.15838.pdf)   -->
+<!-- ![video](https://zju3dv.github.io/neuralrecon/videos/web-scene2.m4v) -->
+<video width="70%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="" id="header_vid">
+    <source src="https://zju3dv.github.io/neuralrecon/videos/web-scene2.m4v" type="video/mp4">
+</video>
 
 <br/>
 
