@@ -24,7 +24,7 @@ If you find this code useful for your research, please use the following BibTeX 
 ```
 @article{sun2021neucon,
   title={{NeuralRecon}: Real-Time Coherent {3D} Reconstruction from Monocular Video},
-  author={Sun, Jiaming and Xie, Yiming and Chen, Linghao and Bao, Hujun and Zhou, Xiaowei},
+  author={Sun, Jiaming and Xie, Yiming and Chen, Linghao and Zhou, Xiaowei and Bao, Hujun},
   journal={CVPR},
   year={2021}
 }
