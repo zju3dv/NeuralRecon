@@ -39,7 +39,7 @@ gdown --id 1zKuWqm9weHSm98SZKld1PbEddgLOQkQV
 <!-- ### Real-time Demo on Custom Data with Camera Poses from ARKit.
 See [DEMO.md](DEMO.md). -->
 
-### Data Preperation for ScanNet
+### Data Preparation for ScanNet
 Download and extract Scannet by following the instructions provided at http://www.scan-net.org/.
 <details>
   <summary>[Expected directory structure of ScanNet (click to expand)]</summary>
@@ -103,7 +103,7 @@ python -m torch.distributed.launch --nproc_per_node=2 main.py --cfg ./config/tra
 ```
 </details>
 
-The training is seperated to two phases and the switching between phases is controlled manually for now:
+The training is separated into two phases and the switching between phases is controlled manually for now:
 
 -  Phase 1 (the first 0-20 epoch), training single fragments.
 `MODEL.FUSION.FUSION_ON=False, MODEL.FUSION.FULL=False`
