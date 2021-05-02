@@ -11,11 +11,106 @@
 
 <br/>
 
-## Code release ETA
-We plan to release the code within a month, stay tuned. 
-Please subscribe to [this discussion thread](https://github.com/zju3dv/NeuralRecon/discussions/2) if you wish to be notified of the code release.
-In the meanwhile, discussions about the paper are welcomed in the [discussion panel](https://github.com/zju3dv/NeuralRecon/discussions).
+## TODO List and ETA
+- [x] Code (with detailed comments) for training and inference, and the data preparation scripts (2021-5-2).
+- [x] Pretrained models on ScanNet (2021-5-2).
+- [ ] Real-time reconstruction demo on custom data with the accompanying instructions (expected 2021-5-7).
+- [ ] Colab notebook to run NeuralRecon with custom data without configuring a python environment with GPU support. (expected 2021-5-7).
+- [ ] Evaluation code and metrics (expected 2021-6-10).
 
+## How to Use
+
+### Installation
+```shell
+conda env create -f environment.yaml
+conda activate neucon
+```
+<!-- Follow instructions in [torchsparse](https://github.com/mit-han-lab/torchsparse) to install torchsparse. -->
+
+### Pretrain Model on ScanNet
+Download the [pretrained weights](https://drive.google.com/file/d/1zKuWqm9weHSm98SZKld1PbEddgLOQkQV/view?usp=sharing) and put it under 
+`PROJECT_PATH/checkpoints/`.
+You can also use [gdown](https://github.com/wkentaro/gdown) to download it in command line:
+```bash
+mkdir checkpoints && cd checkpoints
+gdown --id 1zKuWqm9weHSm98SZKld1PbEddgLOQkQV
+```
+
+<!-- ### Real-time Demo on Custom Data with Camera Poses from ARKit.
+See [DEMO.md](DEMO.md). -->
+
+### Data Preperation for ScanNet
+Download and extract Scannet by following the instructions provided at http://www.scan-net.org/.
+<details>
+  <summary>[Expected directory structure of ScanNet (click to expand)]</summary>
+
+```
+DATAROOT
+└───scannet
+│   └───scans
+│   |   └───scene0000_00
+│   |       └───color
+│   |       │   │   0.jpg
+│   |       │   │   1.jpg
+│   |       │   │   ...
+│   |       │   ...
+│   └───scans_test
+│   |   └───scene0707_00
+│   |       └───color
+│   |       │   │   0.jpg
+│   |       │   │   1.jpg
+│   |       │   │   ...
+│   |       │   ...
+|   └───scannetv2_test.txt
+|   └───scannetv2_train.txt
+|   └───scannetv2_val.txt
+```
+</details>
+
+Next run the data preparation script which parses the raw data format into the processed pickle format.
+This script also generates the ground truth TSDFs using TSDF Fusion.  
+<details>
+  <summary>[Data preparation script]</summary>
+
+```bash
+# Change PATH_TO_SCANNET and OUTPUT_PATH accordingly.
+# For the training/val split:
+python tools/tsdf_fusion/generate_gt.py --data_path PATH_TO_SCANNET --save_name all_tsdf_9 --window_size 9
+# For the test split
+python tools/tsdf_fusion/generate_gt.py --test --data_path PATH_TO_SCANNET --save_name all_tsdf_9 --window_size 9
+```
+</details>
+
+
+### Inference on ScanNet test-set
+```bash
+python main.py --cfg ./config/test.yaml
+```
+
+The reconstructed meshes will be saved to `LOGDIR`, which is `./checkpoints/release` by default.
+
+### Training on ScanNet
+
+Start training by running `./train.sh`.
+More info about training (e.g. GPU requirements, convergence time, etc.) to be added soon.
+<details>
+  <summary>[train.sh]</summary>
+
+```bash
+#!/usr/bin/env bash
+export CUDA_VISIBLE_DEVICES=0,1
+python -m torch.distributed.launch --nproc_per_node=2 main.py --cfg ./config/train.yaml
+```
+</details>
+
+The training is seperated to two phases and the switching between phases is controlled manually for now:
+
+-  Phase 1 (the first 0-20 epoch), training single fragments.
+`MODEL.FUSION.FUSION_ON=False, MODEL.FUSION.FULL=False`
+
+
+- Phase 2 (the remaining 21-50 epoch), with `GRUFusion`.
+`MODEL.FUSION.FUSION_ON=True, MODEL.FUSION.FULL=True`
 
 ## Citation
 
@@ -53,5 +148,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-
-

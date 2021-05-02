@@ -1,0 +1,41 @@
+DATASET: 'scannet'
+BATCH_SIZE: 1
+SAVE_SCENE_MESH: False
+LOGDIR: './checkpoints/release'
+SAVE_FREQ: 1
+MODE: 'train'
+
+TRAIN:
+  PATH: 'data/scannet'
+  EPOCHS: 991
+  N_VIEWS: 9
+  LR: 1e-3
+  N_WORKERS: 64
+  LREPOCHS: '12,24,48:2'
+
+TEST:
+  PATH: 'data/scannet'
+  N_VIEWS: 9
+  N_WORKERS: 4
+
+MODEL:
+  N_LAYER: 3
+  N_VOX: [96, 96, 96]
+  VOXEL_SIZE: 0.04
+  TRAIN_NUM_SAMPLE: [4096, 16384, 65536]
+  TEST_NUM_SAMPLE: [4096, 16384, 65536]
+
+  BACKBONE2D:
+    ARC: 'fpn-mnas-1'
+
+  FUSION:
+    FUSION_ON: True
+    HIDDEN_DIM: 64
+
+    AVERAGE: False
+    FULL: True
+
+  LW: [1.0, 0.8, 0.64]
+
+  THRESHOLDS: [0, 0, 0]
+  POS_WEIGHT: 1.5
