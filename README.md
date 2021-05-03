@@ -13,7 +13,7 @@
 
 ## TODO List and ETA
 - [x] Code (with detailed comments) for training and inference, and the data preparation scripts (2021-5-2).
-- [x] Pretrained models on ScanNet (2021-5-2).
+- [x] Pretrained model on ScanNet (2021-5-2).
 - [ ] Real-time reconstruction demo on custom data with the accompanying instructions (expected 2021-5-7).
 - [ ] Colab notebook to run NeuralRecon with custom data without configuring a python environment with GPU support. (expected 2021-5-7).
 - [ ] Evaluation code and metrics (expected 2021-6-10).
@@ -27,7 +27,7 @@ conda activate neucon
 ```
 <!-- Follow instructions in [torchsparse](https://github.com/mit-han-lab/torchsparse) to install torchsparse. -->
 
-### Pretrain Model on ScanNet
+### Pretrained Model on ScanNet
 Download the [pretrained weights](https://drive.google.com/file/d/1zKuWqm9weHSm98SZKld1PbEddgLOQkQV/view?usp=sharing) and put it under 
 `PROJECT_PATH/checkpoints/`.
 You can also use [gdown](https://github.com/wkentaro/gdown) to download it in command line:
