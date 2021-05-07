@@ -21,6 +21,8 @@
 
 ### Installation
 ```shell
+# Ubuntu 18.04 and above is recommended.
+sudo apt install libsparsehash-dev  # you can try to install sparsehash with conda if you don't have sudo privileges.
 conda env create -f environment.yaml
 conda activate neucon
 ```
