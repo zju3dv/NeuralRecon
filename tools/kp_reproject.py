@@ -1,6 +1,7 @@
 import json
 import numpy as np
 import os
+from tqdm import tqdm
 
 
 def path_parser(root_path, data_source='TagBA'):
@@ -146,11 +147,10 @@ def load_camera_intrinsic(cam_file, data_source='TagBA'):
 def extract_frames(video_path, out_folder, size):
     import cv2
     cap = cv2.VideoCapture(video_path)
-    i = 0
-    while True:
+    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    for i in tqdm(range(frame_count)):
         ret, frame = cap.read()
         if ret is not True:
             break
         frame = cv2.resize(frame, size)
         cv2.imwrite(os.path.join(out_folder, str(i).zfill(5) + '.jpg'), frame)
-        i += 1

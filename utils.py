@@ -201,6 +201,11 @@ class SaveScene(object):
             self.vis.register_key_action_callback(ord("R"), self.rotate_view)
             self.vis.create_window()
 
+    def close(self):
+        if self.vis is not None:
+            self.vis.destroy_window()
+            cv2.destroyAllWindows()
+
     def reset(self):
         self.keyframe_id = 0
         self.tsdf_volume = []
@@ -221,10 +226,40 @@ class SaveScene(object):
 
     @staticmethod
     def tsdf2mesh(voxel_size, origin, tsdf_vol):
-        verts, faces, norms, vals = measure.marching_cubes_lewiner(tsdf_vol, level=0)
+        verts, faces, norms, vals = measure.marching_cubes(tsdf_vol, level=0)
         verts = verts * voxel_size + origin  # voxel grid coordinates to world coordinates
         mesh = trimesh.Trimesh(vertices=verts, faces=faces, vertex_normals=norms)
         return mesh
+
+    def vis_incremental(self, epoch_idx, batch_idx, imgs, outputs):
+        tsdf_volume = outputs['scene_tsdf'][batch_idx].data.cpu().numpy()
+        origin = outputs['origin'][batch_idx].data.cpu().numpy()
+        if self.cfg.DATASET == 'demo':
+            origin[2] -= 1.5
+
+        if (tsdf_volume == 1).all():
+            logger.warning('No valid partial data for scene {}'.format(self.scene_name))
+        else:
+            # Marching cubes
+            mesh = self.tsdf2mesh(self.cfg.MODEL.VOXEL_SIZE, origin, tsdf_volume)
+            # vis
+            key_frames = []
+            for img in imgs[::3]:
+                img = img.permute(1, 2, 0)
+                img = img[:, :, [2, 1, 0]]
+                img = img.data.cpu().numpy()
+                img = cv2.resize(img, (img.shape[1] // 2, img.shape[0] // 2))
+                key_frames.append(img)
+            key_frames = np.concatenate(key_frames, axis=0)
+            cv2.imshow('Selected Keyframes', key_frames / 255)
+            cv2.waitKey(1)
+            # vis mesh
+            mesh = mesh.as_open3d
+            mesh = mesh.compute_vertex_normals()
+            self.vis.clear_geometries()
+            self.vis.add_geometry(mesh)
+            self.vis.poll_events()
+            self.vis.update_renderer()
 
     def save_incremental(self, epoch_idx, batch_idx, imgs, outputs):
         save_path = os.path.join('incremental_' + self.log_dir + '_' + str(epoch_idx), self.scene_name)
@@ -237,28 +272,12 @@ class SaveScene(object):
             origin[2] -= 1.5
 
         if (tsdf_volume == 1).all():
-            logger.info('No valid partial data for scene {}'.format(self.scene_name))
+            logger.warning('No valid partial data for scene {}'.format(self.scene_name))
         else:
             # Marching cubes
             mesh = self.tsdf2mesh(self.cfg.MODEL.VOXEL_SIZE, origin, tsdf_volume)
             # save
             mesh.export(os.path.join(save_path, 'mesh_{}.ply'.format(self.keyframe_id)))
-            # vis
-            if self.cfg.VIS_INCREMENTAL:
-                # vis image
-                for img in imgs:
-                    img = img.permute(1, 2, 0)
-                    img = img[:, :, [2, 1, 0]]
-                    img = img.data.cpu().numpy()
-                    cv2.imshow('rgb', img / 255)
-                    cv2.waitKey(1)
-                # vis mesh
-                mesh = mesh.as_open3d
-                mesh = mesh.compute_vertex_normals()
-                self.vis.clear_geometries()
-                self.vis.add_geometry(mesh)
-                self.vis.poll_events()
-                self.vis.update_renderer()
 
     def save_scene_eval(self, epoch, outputs):
         tsdf_volume = outputs['scene_tsdf'][0].data.cpu().numpy()
@@ -303,3 +322,11 @@ class SaveScene(object):
                 else:
                     self.tsdf_volume[3] = outputs['scene_tsdf']
                 self.save_incremental(epoch_idx, i, inputs['imgs'][i], outputs)
+
+            if self.cfg.VIS_INCREMENTAL:
+                if len(self.tsdf_volume) == 3:
+                    self.tsdf_volume.append(outputs['scene_tsdf'])
+                else:
+                    self.tsdf_volume[3] = outputs['scene_tsdf']
+                self.vis_incremental(epoch_idx, i, inputs['imgs'][i], outputs)
+

@@ -1,16 +1,18 @@
 DATASET: 'demo'
 BATCH_SIZE: 1
-SAVE_SCENE_MESH: False
-SAVE_INCREMENTAL: True
-VIS_INCREMENTAL: False
-LOGDIR: './checkpoints/release'
+SAVE_SCENE_MESH: True
+SAVE_INCREMENTAL: False
+VIS_INCREMENTAL: False # Open3D is required to enable this flag, unfortunately you can't rotate in the mesh viewer for now.
+REDUCE_GPU_MEM: True  # Drastically reduces GPU memory and will slow down inference a bit.
+LOGDIR: './checkpoints'
 SAVE_FREQ: 1
 MODE: 'test'
 
 TEST:
-  PATH: '/data/xieyiming/neufu_demo/2020-11-22T20-42-10'
+  # Change your own data path here
+  PATH: '/home/sunjiaming/Repositories/NeuralFusion/data/neucon_demo/jiarun_0'
   N_VIEWS: 9
-  N_WORKERS: 4
+  N_WORKERS: 1
 
 MODEL:
   N_LAYER: 3

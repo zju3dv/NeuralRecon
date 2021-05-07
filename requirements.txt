@@ -10,3 +10,5 @@ trimesh
 yacs
 h5py
 loguru
+open3d # only required for visualization, remove it if you don't like it's package size (~200MB)
+gdown # for downloading checkpoints

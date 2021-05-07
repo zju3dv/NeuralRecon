@@ -13,9 +13,8 @@
 
 ## TODO List and ETA
 - [x] Code (with detailed comments) for training and inference, and the data preparation scripts (2021-5-2).
-- [x] Pretrained model on ScanNet (2021-5-2).
-- [ ] Real-time reconstruction demo on custom data with the accompanying instructions (expected 2021-5-7).
-- [ ] Colab notebook to run NeuralRecon with custom data without configuring a python environment with GPU support. (expected 2021-5-7).
+- [x] Pretrained models on ScanNet (2021-5-2).
+- [x] Real-time reconstruction demo on custom ARKit data with instructions (2021-5-7).
 - [ ] Evaluation code and metrics (expected 2021-6-10).
 
 ## How to Use
@@ -27,7 +26,7 @@ conda activate neucon
 ```
 <!-- Follow instructions in [torchsparse](https://github.com/mit-han-lab/torchsparse) to install torchsparse. -->
 
-### Pretrained Model on ScanNet
+### Pretrain Model on ScanNet
 Download the [pretrained weights](https://drive.google.com/file/d/1zKuWqm9weHSm98SZKld1PbEddgLOQkQV/view?usp=sharing) and put it under 
 `PROJECT_PATH/checkpoints/`.
 You can also use [gdown](https://github.com/wkentaro/gdown) to download it in command line:
@@ -36,11 +35,12 @@ mkdir checkpoints && cd checkpoints
 gdown --id 1zKuWqm9weHSm98SZKld1PbEddgLOQkQV
 ```
 
-<!-- ### Real-time Demo on Custom Data with Camera Poses from ARKit.
-See [DEMO.md](DEMO.md). -->
+### Real-time Demo on Custom Data with Camera Poses from ARKit.
+We provide a real-time demo of NeuralRecon running with self-captured ARKit data.
+Please refer to [DEMO.md](DEMO.md) for details.
 
-### Data Preparation for ScanNet
-Download and extract Scannet by following the instructions provided at http://www.scan-net.org/.
+### Data Preperation for ScanNet
+Download and extract ScanNet by following the instructions provided at http://www.scan-net.org/.
 <details>
   <summary>[Expected directory structure of ScanNet (click to expand)]</summary>
 
@@ -87,7 +87,7 @@ python tools/tsdf_fusion/generate_gt.py --test --data_path PATH_TO_SCANNET --sav
 python main.py --cfg ./config/test.yaml
 ```
 
-The reconstructed meshes will be saved to `LOGDIR`, which is `./checkpoints/release` by default.
+The reconstructed meshes will be saved to `LOGDIR`, which is `./checkpoints/` by default.
 
 ### Training on ScanNet
 
@@ -103,7 +103,7 @@ python -m torch.distributed.launch --nproc_per_node=2 main.py --cfg ./config/tra
 ```
 </details>
 
-The training is separated into two phases and the switching between phases is controlled manually for now:
+The training is seperated to two phases and the switching between phases is controlled manually for now:
 
 -  Phase 1 (the first 0-20 epoch), training single fragments.
 `MODEL.FUSION.FUSION_ON=False, MODEL.FUSION.FULL=False`
@@ -116,7 +116,7 @@ The training is separated into two phases and the switching between phases is co
 
 If you find this code useful for your research, please use the following BibTeX entry.
 
-```
+```bibtex
 @article{sun2021neucon,
   title={{NeuralRecon}: Real-Time Coherent {3D} Reconstruction from Monocular Video},
   author={Sun, Jiaming and Xie, Yiming and Chen, Linghao and Zhou, Xiaowei and Bao, Hujun},
@@ -125,10 +125,9 @@ If you find this code useful for your research, please use the following BibTeX 
 }
 ```
 
-<!-- ## Acknowledgment
-
-This repo is built based on the Mask R-CNN implementation from [maskrcnn-benchmark](https://github.com/facebookresearch/maskrcnn-benchmark), and we also use the pretrained Stereo R-CNN weight from [here](https://drive.google.com/file/d/1rZ5AsMms7-oO-VfoNTAmBFOr8O2L0-xt/view?usp=sharing) for initialization. -->
-
+## Acknowledgment
+We would like to specially thank Reviewer 3 for the insightful and constructive comments. We would like to thank Sida Peng , Siyu Zhang and Qi Fang for the proof-reading.
+Some of the code in this repo is borrowed from [MVSNet_pytorch](https://github.com/xy-guo/MVSNet_pytorch), thanks Xiaoyang!
 
 ## Copyright
 This work is affiliated with ZJU-SenseTime Joint Lab of 3D Vision, and its intellectual property belongs to SenseTime Group Ltd.

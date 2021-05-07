@@ -25,7 +25,8 @@ class NeuralRecon(nn.Module):
         self.backbone2d = MnasMulti(alpha)
         self.neucon_net = NeuConNet(cfg.MODEL)
         # for fusing to global volume
-        self.fuse_to_global = GRUFusion(cfg.MODEL, direct_substitute=True, incremental_save=cfg.SAVE_INCREMENTAL)
+        self.fuse_to_global = GRUFusion(cfg.MODEL, direct_substitute=True, 
+                                        incremental_save=cfg.SAVE_INCREMENTAL or cfg.VIS_INCREMENTAL)
 
     def normalizer(self, x):
         """ Normalizes the RGB images to the input range"""

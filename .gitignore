@@ -1,10 +1,12 @@
 .idea
 .vscode
+.DS_Store
 outputs
 *.bin
 checkpoints
 data/
 results/
+incremental_results/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

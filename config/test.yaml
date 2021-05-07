@@ -1,7 +1,7 @@
 DATASET: 'scannet'
 BATCH_SIZE: 2
 SAVE_SCENE_MESH: True
-LOGDIR: './checkpoints/release'
+LOGDIR: './checkpoints'
 SAVE_FREQ: 1
 MODE: 'test'
 
