@@ -74,7 +74,7 @@ with torch.no_grad():
             # will show down the inference
             torch.cuda.empty_cache()
         # save mesh
-        if cfg.SAVE_SCENE_MESH or cfg.SAVE_INCREMENTAL:
+        if cfg.SAVE_SCENE_MESH or cfg.VIS_INCREMENTAL or cfg.SAVE_INCREMENTAL:
             save_mesh_scene(outputs, sample, epoch_idx)
         gpu_mem_usage.append(torch.cuda.memory_reserved())
         

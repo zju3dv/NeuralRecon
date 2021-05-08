@@ -8,8 +8,9 @@ You can search for 'arkit' on [this page](https://developer.apple.com/library/ar
 You will also need a Mac computer to compile the data capture app and a GPU-enabled machine (GPU memory > 2GB) to run NeuralRecon.
 
 ## Step 1: Capture video data with camera poses from ARKit
-For now we use [ios_logger](https://github.com/Varvrar/ios_logger) as the capture app.
+For now we use [ios_logger](https://github.com/Varvrar/ios_logger) as the capture app, and you will have to compile it yourself.
 We are making an attempt to release a new capture app that is available to download from the App Store. 
+If you don't want to take the efforts capturing your own data, you can download the [example data](https://drive.google.com/file/d/1i7yDY-oautHgwrDPUrB7BuZytiIYhxfY/view?usp=sharing) and skip the rest of step 1.
 
 ### Compile ios_logger
 
