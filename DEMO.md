@@ -61,4 +61,4 @@ The structure of `fragments.pkl`:
 ]
 ```
 
-[Here](tools/ios_logger_process.py) is the code for generating `fragments.pkl`.
+[Here](tools/process_arkit_data.py) is the code for generating `fragments.pkl`.
