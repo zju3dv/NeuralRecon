@@ -76,14 +76,10 @@ def process_data(data_path, data_source='ARKit', window_size=9, min_angle=15, mi
                     count = 0
 
     # save fragments
-    scene = data_path.split('/')[-1]
     for i, ids in enumerate(tqdm(all_ids, desc='Saving fragments file...')):
         poses = []
         intrinsics = []
         for id in ids:
-            pose = cam_pose_dict[id]
-            # todo same as ScanNet
-            pose[2, 3] = pose[2, 3] + 1.5
             poses.append(cam_pose_dict[id])
             intrinsics.append(cam_intrinsic_dict[id]['K'])
         fragments.append({

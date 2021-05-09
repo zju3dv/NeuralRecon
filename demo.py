@@ -87,4 +87,5 @@ Summary:
 """
 print(summary_text)
 
-save_mesh_scene.close()
+if cfg.VIS_INCREMENTAL:
+    save_mesh_scene.close()

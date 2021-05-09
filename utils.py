@@ -202,9 +202,8 @@ class SaveScene(object):
             self.vis.create_window()
 
     def close(self):
-        if self.vis is not None:
-            self.vis.destroy_window()
-            cv2.destroyAllWindows()
+        self.vis.destroy_window()
+        cv2.destroyAllWindows()
 
     def reset(self):
         self.keyframe_id = 0
