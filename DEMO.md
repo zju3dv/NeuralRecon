@@ -1,8 +1,8 @@
 
 # Real-time Demo with Custom ARKit Data
-In this tutorial we introduce the real-time demo of NeuralRecon running with self-captured ARKit data.
+In this tutorial we introduce the real-time demo of NeuralRecon running with self-captured ARKit data. If you don't want to take the effort capturing your own data, you can download the [example data](https://drive.google.com/file/d/1i7yDY-oautHgwrDPUrB7BuZytiIYhxfY/view?usp=sharing) and skip step 1.
 
-To run this demo, an Apple device (iPhone or iPad) with ARKit enabled is required. 
+To capture data and run this demo, an Apple device (iPhone or iPad) with ARKit support is required. 
 Generally speaking, devices released after 2017 (e.g. iPhone 7 and later generations) are all supported. 
 You can search for 'arkit' on [this page](https://developer.apple.com/library/archive/documentation/DeviceInformation/Reference/iOSDeviceCompatibility/DeviceCompatibilityMatrix/DeviceCompatibilityMatrix.html) to find out.
 You will also need a Mac computer to compile the data capture app and a GPU-enabled machine (GPU memory > 2GB) to run NeuralRecon.
@@ -10,7 +10,7 @@ You will also need a Mac computer to compile the data capture app and a GPU-enab
 ## Step 1: Capture video data with camera poses from ARKit
 For now we use [ios_logger](https://github.com/Varvrar/ios_logger) as the capture app, and you will have to compile it yourself.
 We are making an attempt to release a new capture app that is available to download from the App Store. 
-If you don't want to take the efforts capturing your own data, you can download the [example data](https://drive.google.com/file/d/1i7yDY-oautHgwrDPUrB7BuZytiIYhxfY/view?usp=sharing) and skip the rest of step 1.
+
 
 ### Compile ios_logger
 
@@ -55,8 +55,8 @@ The structure of `fragments.pkl`:
 {'scene': scene_name: [str],
 'fragment_id': fragment id: [int],
 'image_ids': image id: [int],
-'extrinsics': poses: [metrics:4X4],
-'intrinsics': intrinsics: [metrics: 3X3]
+'extrinsics': poses: [matrix: 4X4],
+'intrinsics': intrinsics: [matrix: 3X3]
 }
 ...
 ]
