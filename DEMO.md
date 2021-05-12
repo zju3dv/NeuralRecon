@@ -25,7 +25,7 @@ Although a clean indoor environment is prefered since it's closer to the trainin
 Be sure to move around your device frequently during capture to get more views with covisibility on the same place.
 
 ## Step 2: Run the demo
-After [retrieving the captured data](https://github.com/Varvrar/ios_logger#get-saved-datasets) and transfer it to a GPU-enabled machine, you are good to proceed.
+After [retrieving the captured data](https://github.com/Varvrar/ios_logger#get-saved-datasets) and transfer it to a GPU-enabled machine, you are good to proceed. Notice that it's a good idea to start with the [example data](https://drive.google.com/file/d/1i7yDY-oautHgwrDPUrB7BuZytiIYhxfY/view?usp=sharing) to make sure the environment for NeuralRecon is correctly configured.
 
 1. Change the data path in [demo.yaml](config/demo.yaml).
 2. Optionally, you can enable the `VIS_INCREMENTAL` flag to get a real-time visualization during reconstruction if you are on a local machine. `SAVE_INCREMENTAL` saves the incremental meshes at each step.
@@ -37,6 +37,7 @@ python demo.py --cfg ./config/demo.yaml
 
 The reconstructed mesh will be available under `results/scene_demo_checkpoints_fusion_eval_47`. 
 You can open the ply file with [MeshLab](https://www.meshlab.net/).
+
 ## Illustrations to the processed data format from ios_logger
 For those who are interested to reuse the captured data for other projects:
 
