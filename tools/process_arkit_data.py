@@ -80,6 +80,8 @@ def process_data(data_path, data_source='ARKit', window_size=9, min_angle=15, mi
         poses = []
         intrinsics = []
         for id in ids:
+            # Moving down the X-Y plane in the ARKit coordinate to meet the training settings in ScanNet.
+            cam_pose_dict[id][2, 3] += 1.5
             poses.append(cam_pose_dict[id])
             intrinsics.append(cam_intrinsic_dict[id]['K'])
         fragments.append({
