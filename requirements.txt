@@ -6,9 +6,15 @@ numba
 pycuda
 tensorboardX
 scikit-image
-trimesh
+trimesh~=3.9.18
 yacs
 h5py
 loguru
 open3d # only required for visualization, remove it if you don't like it's package size (~200MB)
 gdown # for downloading checkpoints
+pyrender~=0.1.45
+numpy~=1.20.3
+pyglet~=1.5.16
+zlib~=1.2.11
+setuptools~=52.0.0
+pillow~=8.2.0
