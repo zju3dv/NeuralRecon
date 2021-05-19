@@ -5,7 +5,7 @@ import numpy as np
 import torchvision.utils as vutils
 from skimage import measure
 from loguru import logger
-from tools.render import Viser
+from tools.render import Visualizer
 import cv2
 
 
@@ -197,10 +197,10 @@ class SaveScene(object):
         self.keyframe_id = None
 
         if cfg.VIS_INCREMENTAL:
-            self.vis = Viser()
+            self.vis = Visualizer()
 
     def close(self):
-        self.vis.destroy_window()
+        self.vis.close()
         cv2.destroyAllWindows()
 
     def reset(self):
