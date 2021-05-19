@@ -2,7 +2,7 @@ DATASET: 'demo'
 BATCH_SIZE: 1
 SAVE_SCENE_MESH: True
 SAVE_INCREMENTAL: False
-VIS_INCREMENTAL: False # Open3D is required to enable this flag, unfortunately you can't rotate in the mesh viewer for now.
+VIS_INCREMENTAL: False
 REDUCE_GPU_MEM: True  # Drastically reduces GPU memory and will slow down inference a bit.
 LOGDIR: './checkpoints'
 SAVE_FREQ: 1
