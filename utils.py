@@ -5,7 +5,7 @@ import numpy as np
 import torchvision.utils as vutils
 from skimage import measure
 from loguru import logger
-import open3d as o3d
+from tools.render import Visualizer
 import cv2
 
 
@@ -197,12 +197,10 @@ class SaveScene(object):
         self.keyframe_id = None
 
         if cfg.VIS_INCREMENTAL:
-            self.vis = o3d.visualization.VisualizerWithKeyCallback()
-            self.vis.register_key_action_callback(ord("R"), self.rotate_view)
-            self.vis.create_window()
+            self.vis = Visualizer()
 
     def close(self):
-        self.vis.destroy_window()
+        self.vis.close()
         cv2.destroyAllWindows()
 
     def reset(self):
@@ -253,12 +251,7 @@ class SaveScene(object):
             cv2.imshow('Selected Keyframes', key_frames / 255)
             cv2.waitKey(1)
             # vis mesh
-            mesh = mesh.as_open3d
-            mesh = mesh.compute_vertex_normals()
-            self.vis.clear_geometries()
-            self.vis.add_geometry(mesh)
-            self.vis.poll_events()
-            self.vis.update_renderer()
+            self.vis.vis_mesh(mesh)
 
     def save_incremental(self, epoch_idx, batch_idx, imgs, outputs):
         save_path = os.path.join('incremental_' + self.log_dir + '_' + str(epoch_idx), self.scene_name)
