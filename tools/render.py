@@ -8,7 +8,6 @@ class Viser:
         self.mesh_Node = None
 
     def vis_mesh(self, mesh: trimesh.Trimesh):
-        # Use a breakpoint in the code line below to debug your script.
         mesh = pyrender.Mesh.from_trimesh(mesh, smooth=False)
 
         self.Viewer.render_lock.acquire()
