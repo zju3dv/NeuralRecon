@@ -189,7 +189,7 @@ class SaveScene(object):
         self.log_dir = os.path.join('results', 'scene_' + cfg.DATASET + '_' + log_dir)
         self.scene_name = None
         self.global_origin = None
-        self.tsdf_volume = []
+        self.tsdf_volume = []  # not used during inference.
         self.weight_volume = []
 
         self.coords = None
@@ -271,7 +271,7 @@ class SaveScene(object):
             # save
             mesh.export(os.path.join(save_path, 'mesh_{}.ply'.format(self.keyframe_id)))
 
-    def save_scene_eval(self, epoch, outputs):
+    def save_scene_eval(self, epoch, batch_idx, outputs):
         tsdf_volume = outputs['scene_tsdf'][0].data.cpu().numpy()
         origin = outputs['origin'][0].data.cpu().numpy()
 
@@ -292,33 +292,21 @@ class SaveScene(object):
                 **data)
             mesh.export(os.path.join(save_path, '{}.ply'.format(self.scene_name)))
 
-    def __call__(self, outputs, inputs, epoch_idx):
+    def __call__(self, outputs, inputs, epoch_idx, last_frag=False):
         batch_size = len(inputs['fragment'])
+
+        # batch_size = 1 during inference.
         for i in range(batch_size):
             scene = inputs['scene'][i]
-            scene = scene.replace('/', '-')
-
-            if scene != self.scene_name and self.scene_name is not None and self.cfg.SAVE_SCENE_MESH:
-                self.tsdf_volume.append(outputs['scene_tsdf'])
-                self.save_scene_eval(epoch_idx, outputs)
-
-            if self.scene_name is None or scene != self.scene_name:
-                self.scene_name = scene
-                self.reset()
-            else:
-                self.keyframe_id += 1
+            if scene != 'ignore':
+                self.scene_name = scene.replace('/', '-')
 
             if self.cfg.SAVE_INCREMENTAL:
-                if len(self.tsdf_volume) == 3:
-                    self.tsdf_volume.append(outputs['scene_tsdf'])
-                else:
-                    self.tsdf_volume[3] = outputs['scene_tsdf']
                 self.save_incremental(epoch_idx, i, inputs['imgs'][i], outputs)
 
             if self.cfg.VIS_INCREMENTAL:
-                if len(self.tsdf_volume) == 3:
-                    self.tsdf_volume.append(outputs['scene_tsdf'])
-                else:
-                    self.tsdf_volume[3] = outputs['scene_tsdf']
                 self.vis_incremental(epoch_idx, i, inputs['imgs'][i], outputs)
 
+            if self.cfg.SAVE_SCENE_MESH and last_frag:
+                self.save_scene_eval(epoch_idx, outputs)
+        

@@ -8,7 +8,7 @@ viewer_flags = {
 class Visualizer:
     def __init__(self):
         self.scene = pyrender.Scene(ambient_light=[0.3, 0.3, 0.3, 0.], bg_color=[1.0, 1.0, 1.0, 0.])
-        self.viewer = pyrender.Viewer(self.scene, viewport_size=(1600, 900), 
+        self.viewer = pyrender.Viewer(self.scene, viewport_size=(1400, 900), 
                                       run_in_thread=True, 
                                       viewer_flags = viewer_flags,
                                       use_raymond_lighting=True)
@@ -27,7 +27,7 @@ class Visualizer:
         if self.mesh_node is not None:
             self.scene.remove_node(self.mesh_node)
         self.viewer.render_lock.release()
-        self.mesh_Node = list(self.scene.mesh_nodes)[0]
+        self.mesh_node = list(self.scene.mesh_nodes)[0]
     
     def close(self):
         self.viewer.close_external()
