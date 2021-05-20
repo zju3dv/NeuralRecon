@@ -271,7 +271,7 @@ class SaveScene(object):
             # save
             mesh.export(os.path.join(save_path, 'mesh_{}.ply'.format(self.keyframe_id)))
 
-    def save_scene_eval(self, epoch, batch_idx, outputs):
+    def save_scene_eval(self, epoch, outputs):
         tsdf_volume = outputs['scene_tsdf'][0].data.cpu().numpy()
         origin = outputs['origin'][0].data.cpu().numpy()
 
