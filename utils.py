@@ -208,13 +208,13 @@ class SaveScene(object):
         self.tsdf_volume = []
         self.weight_volume = []
 
-        self.coords = coordinates(np.array([416, 416, 128])).float()
+        # self.coords = coordinates(np.array([416, 416, 128])).float()
 
-        for scale in range(self.cfg.MODEL.N_LAYER):
-            s = 2 ** (self.cfg.MODEL.N_LAYER - scale - 1)
-            dim = tuple(np.array([416, 416, 128]) // s)
-            self.tsdf_volume.append(torch.ones(dim).cuda())
-            self.weight_volume.append(torch.zeros(dim).cuda())
+        # for scale in range(self.cfg.MODEL.N_LAYER):
+        #     s = 2 ** (self.cfg.MODEL.N_LAYER - scale - 1)
+        #     dim = tuple(np.array([416, 416, 128]) // s)
+        #     self.tsdf_volume.append(torch.ones(dim).cuda())
+        #     self.weight_volume.append(torch.zeros(dim).cuda())
 
     def rotate_view(self):
         ctr = self.vis.get_view_control()
@@ -292,7 +292,8 @@ class SaveScene(object):
                 **data)
             mesh.export(os.path.join(save_path, '{}.ply'.format(self.scene_name)))
 
-    def __call__(self, outputs, inputs, epoch_idx, last_frag=False):
+    def __call__(self, outputs, inputs, epoch_idx, frag_idx):
+
         batch_size = len(inputs['fragment'])
 
         # batch_size = 1 during inference.

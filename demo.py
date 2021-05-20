@@ -75,11 +75,23 @@ with torch.no_grad():
             torch.cuda.empty_cache()
 
         # vis or save incremental result.
-        if cfg.VIS_INCREMENTAL or cfg.SAVE_INCREMENTAL or cfg.SAVE_SCENE_MESH:
-            # last fragment name is 'ignore' in datasets/demo.py
-            last_frag = frag_idx == frag_len - 1
-            save_mesh_scene(outputs, sample, epoch_idx, last_frag)
 
+        # prepare for stuff
+        scene = sample['scene'][0]
+        save_mesh_scene.keyframe_id = frag_idx
+        # last fragment name is 'ignore' in datasets/demo.py
+        if scene != 'ignore':
+            save_mesh_scene.scene_name = scene.replace('/', '-')
+
+        if cfg.SAVE_INCREMENTAL:
+            save_mesh_scene.save_incremental(epoch_idx, 0, sample['imgs'][0], outputs)
+
+        if cfg.VIS_INCREMENTAL:
+            save_mesh_scene.vis_incremental(epoch_idx, 0, sample['imgs'][0], outputs)
+
+        if cfg.SAVE_SCENE_MESH and frag_idx == frag_len - 1:
+            save_mesh_scene.save_scene_eval(epoch_idx, outputs)
+        
         gpu_mem_usage.append(torch.cuda.memory_reserved())
         
 summary_text = f"""

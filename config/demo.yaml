@@ -1,6 +1,6 @@
 DATASET: 'demo'
 BATCH_SIZE: 1
-SAVE_SCENE_MESH: True  # not working when SAVE/VIS_INCREMENTAL is turned on, will be fixed in the future.
+SAVE_SCENE_MESH: True  # only saves the first fragment when VIS_INCREMENTAL is turned on, will be fixed in the future.
 SAVE_INCREMENTAL: False
 VIS_INCREMENTAL: False
 REDUCE_GPU_MEM: True  # Drastically reduces GPU memory and will slow down inference a bit.
@@ -10,7 +10,7 @@ MODE: 'test'
 
 TEST:
   # Change your own data path here
-  PATH: '/home/sunjiaming/Repositories/NeuralFusion/data/neucon_demo/jiarun_0'
+  PATH: '/home/sunjiaming/Repositories/NeuralFusion/data/neucon_tianren_demo/tianren_zihao'
   N_VIEWS: 9
   N_WORKERS: 1
 
