@@ -1,6 +1,6 @@
 DATASET: 'demo'
 BATCH_SIZE: 1
-SAVE_SCENE_MESH: True  # only saves the first fragment when VIS_INCREMENTAL is turned on, will be fixed in the future.
+SAVE_SCENE_MESH: True
 SAVE_INCREMENTAL: False
 VIS_INCREMENTAL: False
 REDUCE_GPU_MEM: True  # Drastically reduces GPU memory and will slow down inference a bit.

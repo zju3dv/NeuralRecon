@@ -26,12 +26,6 @@ class DemoDataset(Dataset):
         with open(os.path.join(self.datapath, 'fragments.pkl'), 'rb') as f:
             metas = pickle.load(f)
 
-        if self.mode == 'test' and len(metas) != 0:
-            # make sure to save results for all scenes (utils.py:SaveScene)
-            extra = copy.deepcopy(metas[0])
-            extra['scene'] = 'ignore'
-            metas.append(extra)
-
         return metas
 
     def __len__(self):
