@@ -216,11 +216,6 @@ class SaveScene(object):
         #     self.tsdf_volume.append(torch.ones(dim).cuda())
         #     self.weight_volume.append(torch.zeros(dim).cuda())
 
-    def rotate_view(self):
-        ctr = self.vis.get_view_control()
-        ctr.rotate(10.0, 0.0)
-        return False
-
     @staticmethod
     def tsdf2mesh(voxel_size, origin, tsdf_vol):
         verts, faces, norms, vals = measure.marching_cubes(tsdf_vol, level=0)

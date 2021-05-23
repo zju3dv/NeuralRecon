@@ -79,9 +79,7 @@ with torch.no_grad():
         # prepare for stuff
         scene = sample['scene'][0]
         save_mesh_scene.keyframe_id = frag_idx
-        # last fragment name is 'ignore' in datasets/demo.py
-        if scene != 'ignore':
-            save_mesh_scene.scene_name = scene.replace('/', '-')
+        save_mesh_scene.scene_name = scene.replace('/', '-')
 
         if cfg.SAVE_INCREMENTAL:
             save_mesh_scene.save_incremental(epoch_idx, 0, sample['imgs'][0], outputs)
