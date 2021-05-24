@@ -25,14 +25,13 @@ class NeuralRecon(nn.Module):
         self.backbone2d = MnasMulti(alpha)
         self.neucon_net = NeuConNet(cfg.MODEL)
         # for fusing to global volume
-        self.fuse_to_global = GRUFusion(cfg.MODEL, direct_substitute=True, 
-                                        incremental_save=cfg.SAVE_INCREMENTAL or cfg.VIS_INCREMENTAL)
+        self.fuse_to_global = GRUFusion(cfg.MODEL, direct_substitute=True)
 
     def normalizer(self, x):
         """ Normalizes the RGB images to the input range"""
         return (x - self.pixel_mean.type_as(x)) / self.pixel_std.type_as(x)
 
-    def forward(self, inputs):
+    def forward(self, inputs, save_mesh=False):
         '''
 
         :param inputs: dict: {
@@ -53,6 +52,7 @@ class NeuralRecon(nn.Module):
                                     [(batch size, DIM_X, DIM_Y, DIM_Z)]
             others: unused in network
         }
+        :param save_mesh: a bool to indicate whether or not to save the reconstructed mesh of current sample
         :return: outputs: dict: {
             'coords':                  (Tensor), coordinates of voxels,
                                     (number of voxels, 4) (4 : batch ind, x, y, z)
@@ -83,7 +83,7 @@ class NeuralRecon(nn.Module):
 
         # fuse to global volume.
         if not self.training and 'coords' in outputs.keys():
-            outputs = self.fuse_to_global(outputs['coords'], outputs['tsdf'], inputs, self.n_scales, outputs)
+            outputs = self.fuse_to_global(outputs['coords'], outputs['tsdf'], inputs, self.n_scales, outputs, save_mesh)
 
         # gather loss.
         print_loss = 'Loss: '

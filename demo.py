@@ -67,11 +67,17 @@ gpu_mem_usage = []
 frag_len = len(data_loader)
 with torch.no_grad():
     for frag_idx, sample in enumerate(tqdm(data_loader)):
+        # save mesh if: 1. SAVE_SCENE_MESH and is the last fragment, or
+        #               2. SAVE_INCREMENTAL, or
+        #               3. VIS_INCREMENTAL
+        save_scene = (cfg.SAVE_SCENE_MESH and frag_idx == frag_len - 1) or cfg.SAVE_INCREMENTAL or cfg.VIS_INCREMENTAL
+
         start_time = time.time()
-        outputs, loss_dict = model(sample)
+        outputs, loss_dict = model(sample, save_scene)
         duration += time.time() - start_time
+
         if cfg.REDUCE_GPU_MEM:
-            # will show down the inference
+            # will slow down the inference
             torch.cuda.empty_cache()
 
         # vis or save incremental result.
