@@ -12,13 +12,12 @@ class GRUFusion(nn.Module):
     2. Substitute TSDF in the global volume when direct_substitute = True.
     """
 
-    def __init__(self, cfg, ch_in=None, direct_substitute=False, incremental_save=False):
+    def __init__(self, cfg, ch_in=None, direct_substitute=False):
         super(GRUFusion, self).__init__()
         self.cfg = cfg
         # replace tsdf in global tsdf volume by direct substitute corresponding voxels
         self.direct_substitude = direct_substitute
 
-        self.incremental_save = incremental_save
         if direct_substitute:
             # tsdf
             self.ch_in = [1, 1, 1]
@@ -166,13 +165,14 @@ class GRUFusion(nn.Module):
 
         return outputs
 
-    def forward(self, coords, values_in, inputs, scale=2, outputs=None):
+    def forward(self, coords, values_in, inputs, scale=2, outputs=None, save_mesh=False):
         '''
         :param coords: (Tensor), coordinates of voxels, (N, 4) (4 : Batch ind, x, y, z)
         :param values_in: (Tensor), features/tsdf, (N, C)
         :param inputs: dict: meta data from dataloader
         :param scale:
         :param outputs:
+        :param save_mesh: a bool to indicate whether or not to save the reconstructed mesh of current sample
         if direct_substitude:
         :return: outputs: dict: {
             'origin':                  (List), origin of the predicted partial volume,
@@ -288,7 +288,7 @@ class GRUFusion(nn.Module):
                     tsdf_target_all = torch.cat([tsdf_target_all, tsdf_target])
                     occ_target_all = torch.cat([occ_target_all, occ_target])
 
-            if self.direct_substitude and self.incremental_save:
+            if self.direct_substitude and save_mesh:
                 outputs = self.save_mesh(scale, outputs, i)
 
         if self.direct_substitude:
