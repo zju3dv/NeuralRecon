@@ -148,10 +148,24 @@ class GRUFusion(nn.Module):
             self.target_tsdf_volume[scale].C = torch.cat(
                 [self.target_tsdf_volume[scale].C[valid_target == False], target_coords])
 
-    def save_mesh(self, scale, outputs, batch):
-        if batch == 0:
+    def save_mesh(self, scale, outputs, scene):
+        if outputs is None:
+            outputs = dict()
+        if "scene_name" not in outputs:
             outputs['origin'] = []
             outputs['scene_tsdf'] = []
+            outputs['scene_name'] = []
+        # only keep the newest result
+        if scene in outputs['scene_name']:
+            # delete old
+            idx = outputs['scene_name'].index(scene)
+            del outputs['origin'][idx]
+            del outputs['scene_tsdf'][idx]
+            del outputs['scene_name'][idx]
+
+        # scene name
+        outputs['scene_name'].append(scene)
+
         fuse_coords = self.global_volume[scale].C
         tsdf = self.global_volume[scale].F.squeeze(-1)
         max_c = torch.max(fuse_coords, dim=0)[0][:3]
@@ -181,6 +195,8 @@ class GRUFusion(nn.Module):
                                     [(nx, ny, nz)]
             'target':                  (List), ground truth tsdf volume,
                                     [(nx', ny', nz')]
+            'scene_name':                  (List), name of each scene in 'scene_tsdf',
+                                    [string]
         }
         else:
         :return: updated_coords_all: (Tensor), updated coordinates, (N', 4) (4 : Batch ind, x, y, z)
@@ -207,7 +223,7 @@ class GRUFusion(nn.Module):
             origin = inputs['vol_origin_partial'][i]  # origin of part volume
 
             if scene != self.scene_name[scale] and self.scene_name[scale] is not None and self.direct_substitude:
-                outputs = self.save_mesh(scale, outputs, 0)
+                outputs = self.save_mesh(scale, outputs, self.scene_name[scale])
 
             # if this fragment is from new scene, we reinitialize backend map
             if self.scene_name[scale] is None or scene != self.scene_name[scale]:
@@ -289,7 +305,7 @@ class GRUFusion(nn.Module):
                     occ_target_all = torch.cat([occ_target_all, occ_target])
 
             if self.direct_substitude and save_mesh:
-                outputs = self.save_mesh(scale, outputs, i)
+                outputs = self.save_mesh(scale, outputs, self.scene_name[scale])
 
         if self.direct_substitude:
             return outputs

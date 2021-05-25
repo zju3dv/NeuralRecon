@@ -30,11 +30,6 @@ class ScanNetDataset(Dataset):
     def build_list(self):
         with open(os.path.join(self.datapath, self.tsdf_file, 'fragments_{}.pkl'.format(self.mode)), 'rb') as f:
             metas = pickle.load(f)
-
-        if self.mode == 'test' and len(metas) != 0:
-            # make sure to save results for all scenes (utils.py:SaveScene)
-            metas.append(metas[0])
-
         return metas
 
     def __len__(self):
