@@ -75,8 +75,6 @@ with torch.no_grad():
             torch.cuda.empty_cache()
 
         # vis or save incremental result.
-
-        # prepare for stuff
         scene = sample['scene'][0]
         save_mesh_scene.keyframe_id = frag_idx
         # last fragment name is 'ignore' in datasets/demo.py
@@ -90,6 +88,12 @@ with torch.no_grad():
             save_mesh_scene.vis_incremental(epoch_idx, 0, sample['imgs'][0], outputs)
 
         if cfg.SAVE_SCENE_MESH and frag_idx == frag_len - 1:
+            assert 'scene_tsdf' in outputs, \
+            """Reconstruction failed. Potential reasons could be:
+                1. Wrong camera poses.
+                2. Extremely difficult scene.
+                If you can run with the demo data without any problem, please submit a issue with the failed data attatched, thanks!
+            """
             save_mesh_scene.save_scene_eval(epoch_idx, outputs)
         
         gpu_mem_usage.append(torch.cuda.memory_reserved())
