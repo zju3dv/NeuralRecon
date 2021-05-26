@@ -243,11 +243,15 @@ def test(from_latest=False):
 
                 avg_test_scalars = DictAverageMeter()
                 save_mesh_scene = SaveScene(cfg)
+                batch_len = len(TestImgLoader)
                 for batch_idx, sample in enumerate(TestImgLoader):
                     for n in sample['fragment']:
                         logger.info(n)
+                    # save mesh if SAVE_SCENE_MESH and is the last fragment
+                    save_scene = cfg.SAVE_SCENE_MESH and batch_idx == batch_len - 1
+
                     start_time = time.time()
-                    loss, scalar_outputs, outputs = test_sample(sample)
+                    loss, scalar_outputs, outputs = test_sample(sample, save_scene)
                     logger.info('Epoch {}, Iter {}/{}, test loss = {:.3f}, time = {:3f}'.format(epoch_idx, batch_idx,
                                                                                                 len(TestImgLoader),
                                                                                                 loss,
@@ -260,7 +264,7 @@ def test(from_latest=False):
                                                                            avg_test_scalars.mean()))
 
                     # save mesh
-                    if cfg.SAVE_SCENE_MESH or cfg.SAVE_INCREMENTAL:
+                    if cfg.SAVE_SCENE_MESH:
                         save_mesh_scene(outputs, sample, epoch_idx)
                 save_scalars(tb_writer, 'fulltest', avg_test_scalars.mean(), epoch_idx)
                 logger.info("epoch {} avg_test_scalars:".format(epoch_idx), avg_test_scalars.mean())
@@ -283,10 +287,10 @@ def train_sample(sample):
 
 
 @make_nograd_func
-def test_sample(sample):
+def test_sample(sample, save_scene=False):
     model.eval()
 
-    outputs, loss_dict = model(sample)
+    outputs, loss_dict = model(sample, save_scene)
     loss = loss_dict['total_loss']
 
     return tensor2float(loss), tensor2float(loss_dict), outputs

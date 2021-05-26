@@ -12,13 +12,12 @@ class GRUFusion(nn.Module):
     2. Substitute TSDF in the global volume when direct_substitute = True.
     """
 
-    def __init__(self, cfg, ch_in=None, direct_substitute=False, incremental_save=False):
+    def __init__(self, cfg, ch_in=None, direct_substitute=False):
         super(GRUFusion, self).__init__()
         self.cfg = cfg
         # replace tsdf in global tsdf volume by direct substitute corresponding voxels
         self.direct_substitude = direct_substitute
 
-        self.incremental_save = incremental_save
         if direct_substitute:
             # tsdf
             self.ch_in = [1, 1, 1]
@@ -149,10 +148,24 @@ class GRUFusion(nn.Module):
             self.target_tsdf_volume[scale].C = torch.cat(
                 [self.target_tsdf_volume[scale].C[valid_target == False], target_coords])
 
-    def save_mesh(self, scale, outputs, batch):
-        if batch == 0:
+    def save_mesh(self, scale, outputs, scene):
+        if outputs is None:
+            outputs = dict()
+        if "scene_name" not in outputs:
             outputs['origin'] = []
             outputs['scene_tsdf'] = []
+            outputs['scene_name'] = []
+        # only keep the newest result
+        if scene in outputs['scene_name']:
+            # delete old
+            idx = outputs['scene_name'].index(scene)
+            del outputs['origin'][idx]
+            del outputs['scene_tsdf'][idx]
+            del outputs['scene_name'][idx]
+
+        # scene name
+        outputs['scene_name'].append(scene)
+
         fuse_coords = self.global_volume[scale].C
         tsdf = self.global_volume[scale].F.squeeze(-1)
         max_c = torch.max(fuse_coords, dim=0)[0][:3]
@@ -166,13 +179,14 @@ class GRUFusion(nn.Module):
 
         return outputs
 
-    def forward(self, coords, values_in, inputs, scale=2, outputs=None):
+    def forward(self, coords, values_in, inputs, scale=2, outputs=None, save_mesh=False):
         '''
         :param coords: (Tensor), coordinates of voxels, (N, 4) (4 : Batch ind, x, y, z)
         :param values_in: (Tensor), features/tsdf, (N, C)
         :param inputs: dict: meta data from dataloader
         :param scale:
         :param outputs:
+        :param save_mesh: a bool to indicate whether or not to save the reconstructed mesh of current sample
         if direct_substitude:
         :return: outputs: dict: {
             'origin':                  (List), origin of the predicted partial volume,
@@ -181,6 +195,8 @@ class GRUFusion(nn.Module):
                                     [(nx, ny, nz)]
             'target':                  (List), ground truth tsdf volume,
                                     [(nx', ny', nz')]
+            'scene_name':                  (List), name of each scene in 'scene_tsdf',
+                                    [string]
         }
         else:
         :return: updated_coords_all: (Tensor), updated coordinates, (N', 4) (4 : Batch ind, x, y, z)
@@ -207,7 +223,7 @@ class GRUFusion(nn.Module):
             origin = inputs['vol_origin_partial'][i]  # origin of part volume
 
             if scene != self.scene_name[scale] and self.scene_name[scale] is not None and self.direct_substitude:
-                outputs = self.save_mesh(scale, outputs, 0)
+                outputs = self.save_mesh(scale, outputs, self.scene_name[scale])
 
             # if this fragment is from new scene, we reinitialize backend map
             if self.scene_name[scale] is None or scene != self.scene_name[scale]:
@@ -288,8 +304,8 @@ class GRUFusion(nn.Module):
                     tsdf_target_all = torch.cat([tsdf_target_all, tsdf_target])
                     occ_target_all = torch.cat([occ_target_all, occ_target])
 
-            if self.direct_substitude and self.incremental_save:
-                outputs = self.save_mesh(scale, outputs, i)
+            if self.direct_substitude and save_mesh:
+                outputs = self.save_mesh(scale, outputs, self.scene_name[scale])
 
         if self.direct_substitude:
             return outputs
