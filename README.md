@@ -15,7 +15,7 @@
 - [x] Code (with detailed comments) for training and inference, and the data preparation scripts (2021-5-2).
 - [x] Pretrained models on ScanNet (2021-5-2).
 - [x] Real-time reconstruction demo on custom ARKit data with instructions (2021-5-7).
-- [ ] Evaluation code and metrics (expected 2021-6-10).
+- [x] Evaluation code and metrics (expected 2021-6-10).
 
 ## How to Use
 
@@ -30,7 +30,7 @@ conda activate neucon
 
 ### Pretrained Model on ScanNet
 Download the [pretrained weights](https://drive.google.com/file/d/1zKuWqm9weHSm98SZKld1PbEddgLOQkQV/view?usp=sharing) and put it under 
-`PROJECT_PATH/checkpoints/`.
+`PROJECT_PATH/checkpoints/release`.
 You can also use [gdown](https://github.com/wkentaro/gdown) to download it in command line:
 ```bash
 mkdir checkpoints && cd checkpoints
@@ -89,7 +89,23 @@ python tools/tsdf_fusion/generate_gt.py --test --data_path PATH_TO_SCANNET --sav
 python main.py --cfg ./config/test.yaml
 ```
 
-The reconstructed meshes will be saved to `LOGDIR`, which is `./checkpoints/` by default.
+The reconstructed meshes will be saved to `PROJECT_PATH/results`.
+
+
+### Evaluation on ScanNet test-set
+```
+python tools/evaluation.py --model ./results/scene_scannet_release_fusion_eval_47 --n_proc 16
+```
+
+Note that `evaluation.py` uses pyrender to render depth maps from the predicted mesh for 2D evaluation.
+If you are using headless rendering you must also set the enviroment variable `PYOPENGL_PLATFORM=osmesa`
+(see [pyrender](https://pyrender.readthedocs.io/en/latest/install/index.html) for more details).
+
+You can print the results of a previous evaluation run using
+```
+python tools/visualize_metrics.py --model ./results/scene_scannet_release_fusion_eval_47
+```
+
 
 ### Training on ScanNet
 
