@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torchsparse.point_tensor import PointTensor
+from torchsparse.tensor import PointTensor
 from utils import sparse_to_dense_channel, sparse_to_dense_torch
 from .modules import ConvGRU
 

@@ -1,8 +1,9 @@
+import torch
 import torch.nn as nn
 import torchsparse
 import torchsparse.nn as spnn
-from torchsparse.point_tensor import PointTensor
-from torchsparse.utils.helpers import *
+from torchsparse.tensor import PointTensor
+from torchsparse.utils import *
 
 from ops.torchsparse_utils import *
 
@@ -33,7 +34,7 @@ class BasicDeconvolutionBlock(nn.Module):
                         outc,
                         kernel_size=ks,
                         stride=stride,
-                        transpose=True), spnn.BatchNorm(outc),
+                        transposed=True), spnn.BatchNorm(outc),
             spnn.ReLU(True))
 
     def forward(self, x):
