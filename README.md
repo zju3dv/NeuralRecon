@@ -28,6 +28,18 @@ conda activate neucon
 ```
 <!-- Follow instructions in [torchsparse](https://github.com/mit-han-lab/torchsparse) to install torchsparse. -->
 
+<details>
+  <summary>[FAQ on environment installation]</summary>
+
+ - `AttributeError: module 'torchsparse_backend' has no attribute 'hash_forward'`
+   - Clone `torchsparse` to a local directory. If you have done that, recompile and install `torchsparse` after removing the `build` folder.
+
+ - No sudo privileges to install `libsparsehash-dev`
+   - Install `sparsehash` in conda (included in `environment.yaml`) and run `export CPLUS_INCLUDE_PATH=$CONDA_PREFIX/include` before installing `torchsparse`.
+
+ - For other problems, you can also refer to the [FAQ](https://github.com/mit-han-lab/torchsparse/blob/master/docs/FAQ.md) in `torchsparse`.
+</details>
+
 ### Pretrained Model on ScanNet
 Download the [pretrained weights](https://drive.google.com/file/d/1zKuWqm9weHSm98SZKld1PbEddgLOQkQV/view?usp=sharing) and put it under 
 `PROJECT_PATH/checkpoints/release`.
