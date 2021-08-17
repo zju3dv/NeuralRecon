@@ -57,7 +57,8 @@ Please refer to [DEMO.md](DEMO.md) for details.
 Download and extract ScanNet by following the instructions provided at http://www.scan-net.org/.
 <details>
   <summary>[Expected directory structure of ScanNet (click to expand)]</summary>
-
+  
+You can obtain the train/val/test split information from [here](https://github.com/ScanNet/ScanNet/tree/master/Tasks/Benchmark).
 ```
 DATAROOT
 └───scannet
