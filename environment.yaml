@@ -16,5 +16,5 @@ dependencies:
   - sparsehash  # dependency for torchsparse
   - pip
   - pip:
-    - -r file:requirements.txt
+    - -r requirements.txt
     - git+https://github.com/mit-han-lab/torchsparse.git
