@@ -10,7 +10,7 @@ MODE: 'test'
 
 TEST:
   # Change your own data path here
-  PATH: '/home/sunjiaming/Repositories/NeuralFusion/data/neucon_tianren_demo/tianren_zihao'
+  PATH: '/home/ubuntu/reconformer/data/demo_data'
   N_VIEWS: 9
   N_WORKERS: 1
 
