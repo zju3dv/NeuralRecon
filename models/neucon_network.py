@@ -34,6 +34,11 @@ class NeuConNet(nn.Module):
         # MLPs that predict tsdf and occupancy.
         self.tsdf_preds = nn.ModuleList()
         self.occ_preds = nn.ModuleList()
+        
+        # # MLPs that predict semantics
+        # if cfg.SEMANTIC.SEMANTIC_ON:
+        #     self.semantic_preds = nn.ModuleList()
+        
         for i in range(len(cfg.THRESHOLDS)):
             self.sp_convs.append(
                 SPVCNN(num_classes=1, in_channels=ch_in[i],
@@ -44,6 +49,9 @@ class NeuConNet(nn.Module):
             )
             self.tsdf_preds.append(nn.Linear(channels[i], 1))
             self.occ_preds.append(nn.Linear(channels[i], 1))
+            # # TODO: add semantic predictors
+            # if cfg.SEMANTIC.SEMANTIC_ON:
+            #     self.semantic_preds.append(nn.Linear(channels[i], 1))
 
     def get_target(self, coords, inputs, scale):
         '''
@@ -62,6 +70,11 @@ class NeuConNet(nn.Module):
             coords_down[:, 1:] = (coords[:, 1:] // 2 ** scale)
             tsdf_target = tsdf_target[coords_down[:, 0], coords_down[:, 1], coords_down[:, 2], coords_down[:, 3]]
             occ_target = occ_target[coords_down[:, 0], coords_down[:, 1], coords_down[:, 2], coords_down[:, 3]]
+            
+            # if self.cfg.SEMANTIC.SEMANTIC_ON:
+            #     semantic_target = inputs['semantic_list'][scale]
+            #     semantic_target = semantic_target[coords_down[:, 0], coords_down[:, 1], coords_down[:, 2], coords_down[:, 3]]
+            
             return tsdf_target, occ_target
 
     def upsample(self, pre_feat, pre_coords, interval, num=8):

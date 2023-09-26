@@ -39,3 +39,6 @@ MODEL:
 
   THRESHOLDS: [0, 0, 0]
   POS_WEIGHT: 1.5
+
+# SEMANTIC:
+#   SEMANTIC_ON: True

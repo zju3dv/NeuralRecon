@@ -69,6 +69,10 @@ _C.MODEL.FUSION.HIDDEN_DIM = 64
 _C.MODEL.FUSION.AVERAGE = False
 _C.MODEL.FUSION.FULL = False
 
+# Semantic
+_C.SEMANTIC = CN()
+_C.SEMANTIC.SEMANTIC_ON = False
+
 
 def update_config(cfg, args):
     cfg.defrost()
