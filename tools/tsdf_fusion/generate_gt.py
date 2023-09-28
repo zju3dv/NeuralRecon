@@ -18,7 +18,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Fuse ground truth tsdf')
     parser.add_argument("--dataset", default='scannet')
     parser.add_argument("--data_path", metavar="DIR",
-                        help="path to raw dataset", default='/data/scannet/output/')
+                        help="path to raw dataset", default='/mnt/sdd/scannet/')
     parser.add_argument("--save_name", metavar="DIR",
                         help="file name", default='all_tsdf')
     parser.add_argument('--test', action='store_true',
@@ -34,10 +34,10 @@ def parse_args():
     parser.add_argument('--min_distance', default=0.1, type=float)
 
     # ray multi processes
-    parser.add_argument('--n_proc', type=int, default=16, help='#processes launched to process scenes.')
-    parser.add_argument('--n_gpu', type=int, default=2, help='#number of gpus')
-    parser.add_argument('--num_workers', type=int, default=8)
-    parser.add_argument('--loader_num_workers', type=int, default=8)
+    parser.add_argument('--n_proc', type=int, default=1, help='#processes launched to process scenes.')
+    parser.add_argument('--n_gpu', type=int, default=1, help='#number of gpus')
+    parser.add_argument('--num_workers', type=int, default=1)
+    parser.add_argument('--loader_num_workers', type=int, default=1)
     return parser.parse_args()
 
 
@@ -193,7 +193,7 @@ def save_fragment_pkl(args, scene, cam_intr, depth_list, cam_pose_list):
         pickle.dump(fragments, f)
 
 
-@ray.remote(num_cpus=args.num_workers + 1, num_gpus=(1 / args.n_proc))
+# @ray.remote(num_cpus=args.num_workers + 1, num_gpus=(1 / args.n_proc))
 def process_with_single_worker(args, scannet_files):
     for scene in tqdm(scannet_files):
         if os.path.exists(os.path.join(args.save_path, scene, 'fragments.pkl')):
@@ -261,7 +261,7 @@ def generate_pkl(args):
 if __name__ == "__main__":
     all_proc = args.n_proc * args.n_gpu
 
-    ray.init(num_cpus=all_proc * (args.num_workers + 1), num_gpus=args.n_gpu)
+    # ray.init(num_cpus=all_proc * (args.num_workers + 1), num_gpus=args.n_gpu)
 
     if args.dataset == 'scannet':
         if not args.test:
@@ -272,13 +272,15 @@ if __name__ == "__main__":
     else:
         raise NameError('error!')
 
-    files = split_list(files, all_proc)
+    # files = split_list(files, all_proc)
 
-    ray_worker_ids = []
-    for w_idx in range(all_proc):
-        ray_worker_ids.append(process_with_single_worker.remote(args, files[w_idx]))
+    # ray_worker_ids = []
+    # for w_idx in range(all_proc):
+    #     ray_worker_ids.append(process_with_single_worker.remote(args, files[w_idx]))
 
-    results = ray.get(ray_worker_ids)
-
+    # results = ray.get(ray_worker_ids)
+    
+    results = process_with_single_worker(args, files)
+    
     if args.dataset == 'scannet':
         generate_pkl(args)
