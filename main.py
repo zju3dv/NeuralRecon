@@ -115,7 +115,7 @@ transforms = transforms.Compose(transform)
 # dataset, dataloader
 MVSDataset = find_dataset_def(cfg.DATASET)
 train_dataset = MVSDataset(cfg.TRAIN.PATH, "train", transforms, cfg.TRAIN.N_VIEWS, len(cfg.MODEL.THRESHOLDS) - 1)
-test_dataset = MVSDataset(cfg.TEST.PATH, "test", transforms, cfg.TEST.N_VIEWS, len(cfg.MODEL.THRESHOLDS) - 1)
+# test_dataset = MVSDataset(cfg.TEST.PATH, "test", transforms, cfg.TEST.N_VIEWS, len(cfg.MODEL.THRESHOLDS) - 1)
 
 if cfg.DISTRIBUTED:
     train_sampler = DistributedSampler(train_dataset, shuffle=False)
@@ -127,20 +127,20 @@ if cfg.DISTRIBUTED:
         pin_memory=True,
         drop_last=True
     )
-    test_sampler = DistributedSampler(test_dataset, shuffle=False)
-    TestImgLoader = torch.utils.data.DataLoader(
-        test_dataset,
-        batch_size=cfg.BATCH_SIZE,
-        sampler=test_sampler,
-        num_workers=cfg.TEST.N_WORKERS,
-        pin_memory=True,
-        drop_last=False
-    )
+    # test_sampler = DistributedSampler(test_dataset, shuffle=False)
+    # TestImgLoader = torch.utils.data.DataLoader(
+    #     test_dataset,
+    #     batch_size=cfg.BATCH_SIZE,
+    #     sampler=test_sampler,
+    #     num_workers=cfg.TEST.N_WORKERS,
+    #     pin_memory=True,
+    #     drop_last=False
+    # )
 else:
     TrainImgLoader = DataLoader(train_dataset, cfg.BATCH_SIZE, shuffle=False, num_workers=cfg.TRAIN.N_WORKERS,
                                 drop_last=True)
-    TestImgLoader = DataLoader(test_dataset, cfg.BATCH_SIZE, shuffle=False, num_workers=cfg.TEST.N_WORKERS,
-                               drop_last=False)
+    # TestImgLoader = DataLoader(test_dataset, cfg.BATCH_SIZE, shuffle=False, num_workers=cfg.TEST.N_WORKERS,
+    #                            drop_last=False)
 
 # model, optimizer
 model = NeuralRecon(cfg)

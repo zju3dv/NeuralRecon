@@ -13,7 +13,8 @@ class ScanNetDataset(Dataset):
         self.mode = mode
         self.n_views = nviews
         self.transforms = transforms
-        self.tsdf_file = 'all_tsdf_{}'.format(self.n_views)
+        # self.tsdf_file = 'all_tsdf_{}'.format(self.n_views)
+        self.tsdf_file  = 'all_tsdf'
 
         assert self.mode in ["train", "val", "test"]
         self.metas = self.build_list()
@@ -28,6 +29,7 @@ class ScanNetDataset(Dataset):
         self.max_cashe = 100
 
     def build_list(self):
+        print("SELF.MODE: ", self.mode)
         with open(os.path.join(self.datapath, self.tsdf_file, 'fragments_{}.pkl'.format(self.mode)), 'rb') as f:
             metas = pickle.load(f)
         return metas
