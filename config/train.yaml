@@ -6,15 +6,15 @@ SAVE_FREQ: 1
 MODE: 'train'
 
 TRAIN:
-  PATH: 'data/scannet'
-  EPOCHS: 991
+  PATH: '/mnt/sdd/scannet/'
+  EPOCHS: 10
   N_VIEWS: 9
   LR: 1e-3
   N_WORKERS: 64
   LREPOCHS: '12,24,48:2'
 
 TEST:
-  PATH: 'data/scannet'
+  PATH: '/mnt/sdd/scannet/'
   N_VIEWS: 9
   N_WORKERS: 4
 

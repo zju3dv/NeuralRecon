@@ -244,12 +244,13 @@ def generate_pkl(args):
         splits = ['test']
     for split in splits:
         fragments = []
-        with open(os.path.join(args.save_path, 'splits', 'scannetv2_{}.txt'.format(split))) as f:
-            split_files = f.readlines()
+        # with open(os.path.join(args.save_path, 'splits', 'scannetv2_{}.txt'.format(split))) as f:
+        #     split_files = f.readlines()
         for scene in all_scenes:
             if 'scene' not in scene:
                 continue
-            if scene + '\n' in split_files:
+            # if scene + '\n' in split_files:
+            if True:
                 with open(os.path.join(args.save_path, scene, 'fragments.pkl'), 'rb') as f:
                     frag_scene = pickle.load(f)
                 fragments.extend(frag_scene)
