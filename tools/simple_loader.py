@@ -5,9 +5,9 @@ import cv2
 
 
 def collate_fn(list_data):
-    cam_pose, depth_im, _ = list_data
+    cam_pose, depth_im, color_image = list_data
     # Concatenate all lists
-    return cam_pose, depth_im, _
+    return cam_pose, depth_im, color_image
 
 
 class ScanNetDataset(torch.utils.data.Dataset):
@@ -43,8 +43,10 @@ class ScanNetDataset(torch.utils.data.Dataset):
         depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
         depth_im[depth_im > self.max_depth] = 0
 
-        # Read RGB image
-        color_image = cv2.cvtColor(cv2.imread(os.path.join(self.data_path, self.scene, "color", str(id) + ".jpg")),
+        # # Read RGB image
+        # color_image = cv2.cvtColor(cv2.imread(os.path.join(self.data_path, self.scene, "color", str(id) + ".jpg")),
+                                #    cv2.COLOR_BGR2RGB)
+        color_image = cv2.cvtColor(cv2.imread(os.path.join(self.data_path, self.scene, "seg", str(id) + ".jpg")),
                                    cv2.COLOR_BGR2RGB)
         color_image = cv2.resize(color_image, (depth_im.shape[1], depth_im.shape[0]), interpolation=cv2.INTER_AREA)
 

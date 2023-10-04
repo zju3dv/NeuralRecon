@@ -126,7 +126,7 @@ class TSDFVolume:
           tsdf_vol[voxel_idx] = (tsdf_vol[voxel_idx]*w_old+obs_weight*dist)/w_new;
           
           // Integrate color
-          return;
+          // return;
           float old_color = color_vol[voxel_idx];
           float old_b = floorf(old_color/(256*256));
           float old_g = floorf((old_color-old_b*256*256)/256);

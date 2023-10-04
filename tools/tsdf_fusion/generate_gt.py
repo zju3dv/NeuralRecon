@@ -18,7 +18,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Fuse ground truth tsdf')
     parser.add_argument("--dataset", default='scannet')
     parser.add_argument("--data_path", metavar="DIR",
-                        help="path to raw dataset", default='/mnt/sdd/scannet/')
+                        help="path to raw dataset", default='/mnt/sdd/scannet_subset/')
     parser.add_argument("--save_name", metavar="DIR",
                         help="file name", default='all_tsdf')
     parser.add_argument('--test', action='store_true',
@@ -111,6 +111,8 @@ def save_tsdf_full(args, scene_path, cam_intr, depth_list, cam_pose_list, color_
     for l in range(args.num_layers):
         tsdf_vol, color_vol, weight_vol = tsdf_vol_list[l].get_volume()
         np.savez_compressed(os.path.join(args.save_path, scene_path, 'full_tsdf_layer{}'.format(str(l))), tsdf_vol)
+        np.savez_compressed(os.path.join(args.save_path, scene_path, 'full_semantic_layer{}'.format(str(l))), color_vol)
+        np.savez_compressed(os.path.join(args.save_path, scene_path, 'full_weight_layer{}'.format(str(l))), weight_vol)
 
     if save_mesh:
         for l in range(args.num_layers):
@@ -205,7 +207,8 @@ def process_with_single_worker(args, scannet_files):
         color_all = {}
 
         if args.dataset == 'scannet':
-            n_imgs = len(os.listdir(os.path.join(args.data_path, scene, 'color')))
+            # n_imgs = len(os.listdir(os.path.join(args.data_path, scene, 'color')))
+            n_imgs = len(os.listdir(os.path.join(args.data_path, scene, 'seg')))
             intrinsic_dir = os.path.join(args.data_path, scene, 'intrinsic', 'intrinsic_depth.txt')
             cam_intr = np.loadtxt(intrinsic_dir, delimiter=' ')[:3, :3]
             dataset = ScanNetDataset(n_imgs, scene, args.data_path, args.max_depth)
@@ -213,7 +216,7 @@ def process_with_single_worker(args, scannet_files):
         dataloader = torch.utils.data.DataLoader(dataset, batch_size=None, collate_fn=collate_fn,
                                                  batch_sampler=None, num_workers=args.loader_num_workers)
 
-        for id, (cam_pose, depth_im, _) in enumerate(dataloader):
+        for id, (cam_pose, depth_im, color_image) in enumerate(dataloader):
             if id % 100 == 0:
                 print("{}: read frame {}/{}".format(scene, str(id), str(n_imgs)))
 
@@ -221,7 +224,15 @@ def process_with_single_worker(args, scannet_files):
                 continue
             depth_all.update({id: depth_im})
             cam_pose_all.update({id: cam_pose})
-            # color_all.update({id: color_image})
+            color_all.update({id: color_image})
+
+            # print("************************")
+            # print(np.unique(depth_im))
+            # print(np.unique(color_image))
+            # print(depth_im.shape, color_image.shape)
+            # print("*************************\n")
+
+        print(color_all.keys())
 
         save_tsdf_full(args, scene, cam_intr, depth_all, cam_pose_all, color_all, save_mesh=False)
         save_fragment_pkl(args, scene, cam_intr, depth_all, cam_pose_all)
