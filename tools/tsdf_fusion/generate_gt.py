@@ -10,6 +10,10 @@ import ray
 import torch.multiprocessing
 from tools.simple_loader import *
 
+import open3d as o3d
+import numpy as np
+from glob import glob
+
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 
@@ -111,7 +115,7 @@ def save_tsdf_full(args, scene_path, cam_intr, depth_list, cam_pose_list, color_
     for l in range(args.num_layers):
         tsdf_vol, color_vol, weight_vol = tsdf_vol_list[l].get_volume()
         np.savez_compressed(os.path.join(args.save_path, scene_path, 'full_tsdf_layer{}'.format(str(l))), tsdf_vol)
-        np.savez_compressed(os.path.join(args.save_path, scene_path, 'full_semantic_layer{}'.format(str(l))), color_vol)
+        # np.savez_compressed(os.path.join(args.save_path, scene_path, 'full_semantic_layer{}'.format(str(l))), color_vol)
         np.savez_compressed(os.path.join(args.save_path, scene_path, 'full_weight_layer{}'.format(str(l))), weight_vol)
 
     if save_mesh:
@@ -225,18 +229,29 @@ def process_with_single_worker(args, scannet_files):
             depth_all.update({id: depth_im})
             cam_pose_all.update({id: cam_pose})
             color_all.update({id: color_image})
-
-            # print("************************")
-            # print(np.unique(depth_im))
-            # print(np.unique(color_image))
-            # print(depth_im.shape, color_image.shape)
-            # print("*************************\n")
-
-        print(color_all.keys())
-
+            
+        save_semantic_full(args, scene)            
         save_tsdf_full(args, scene, cam_intr, depth_all, cam_pose_all, color_all, save_mesh=False)
         save_fragment_pkl(args, scene, cam_intr, depth_all, cam_pose_all)
 
+
+def save_semantic_full(args, scene): 
+    print("Generate Groundtruth for the Semantic Class...")
+    semantic_model_dir = os.path.join(args.data_path, scene, '*.labels.ply')
+    semantic_model_files = glob(semantic_model_dir)
+    # hard-coded here since there is only one .labels.ply file in each scene directory
+    pcd = o3d.io.read_point_cloud(semantic_model_files[0])
+    
+    semantic_path = os.path.join(args.save_path, scene)
+    if not os.path.exists(semantic_path):
+        os.makedirs(semantic_path)
+    
+    for l in range(args.num_layers):
+        voxel_size = args.voxel_size * 2 ** l
+        voxel_grid = o3d.geometry.VoxelGrid.create_from_point_cloud(pcd, voxel_size=voxel_size)
+        semantic_array = gen_semantic_array(voxel_grid, voxel_size)
+        np.savez_compressed(os.path.join(args.save_path, scene, 'full_semantic_layer{}'.format(str(l))), semantic_array)
+    
 
 def split_list(_list, n):
     assert len(_list) >= n
@@ -268,6 +283,30 @@ def generate_pkl(args):
 
         with open(os.path.join(args.save_path, 'fragments_{}.pkl'.format(split)), 'wb') as f:
             pickle.dump(fragments, f)
+
+            
+def color_to_class(rgb):
+    r, g, b = [int(c * 255) for c in rgb]
+    unique_id = r << 16 | g << 8 | b
+    return int(unique_id)
+
+
+def gen_semantic_array(voxel_grid, voxel_size):
+    voxels = voxel_grid.get_voxels()
+    voxel_grid_bound = voxel_grid.get_axis_aligned_bounding_box()
+    
+    voxel_grid_shape = ((voxel_grid_bound.get_max_bound() - voxel_grid_bound.get_min_bound()) / voxel_size).astype(int)
+    semantic_array = np.zeros(voxel_grid_shape)
+    
+    for voxel in voxels:
+        color = voxel.color
+        unique_id = color_to_class(color)
+        try:
+            semantic_array[voxel.grid_index] = unique_id
+        except:
+            continue
+    
+    return semantic_array
 
 
 if __name__ == "__main__":

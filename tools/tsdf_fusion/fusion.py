@@ -224,7 +224,7 @@ class TSDFVolume:
             # Fold RGB color image into a single channel image
             color_im = color_im.astype(np.float32)
             color_im = np.floor(color_im[..., 2] * self._color_const + color_im[..., 1] * 256 + color_im[..., 0])
-            color_im = color_im.reshape(-1).astype(np.float32)
+            # color_im = color_im.reshape(-1).astype(np.float32)
         else:
             color_im = np.array(0)
 
@@ -284,12 +284,13 @@ class TSDFVolume:
             tsdf_vol_new, w_new = self.integrate_tsdf(tsdf_vals, valid_dist, w_old, obs_weight)
             self._weight_vol_cpu[valid_vox_x, valid_vox_y, valid_vox_z] = w_new
             self._tsdf_vol_cpu[valid_vox_x, valid_vox_y, valid_vox_z] = tsdf_vol_new
-
+            
             # Integrate color
             old_color = self._color_vol_cpu[valid_vox_x, valid_vox_y, valid_vox_z]
             old_b = np.floor(old_color / self._color_const)
             old_g = np.floor((old_color - old_b * self._color_const) / 256)
             old_r = old_color - old_b * self._color_const - old_g * 256
+            # new_color = color_im[pix_y*im_w+pix_x]
             new_color = color_im[pix_y[valid_pts], pix_x[valid_pts]]
             new_b = np.floor(new_color / self._color_const)
             new_g = np.floor((new_color - new_b * self._color_const) / 256)
